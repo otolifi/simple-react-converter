@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { ItemsContext } from '../App';
-import ConvertedUnits from './ConvertedUnits';
+import React, { useState, useEffect } from 'react';
+//import { ItemsContext } from '../App';
 import { Select, Button, TextField } from '@material-ui/core';
+import {useSelector, useDispatch} from 'react-redux';
 
 export const factors = {
     "Length": {
@@ -49,14 +49,17 @@ export const factors = {
     }
 }
 
-export const ResultsContext = React.createContext();
+//export const ResultsContext = React.createContext();
 
 function UnitConverter() {
+    const dispatch = useDispatch();
     function operate() {
         let result = parseFloat(fromValue) * factors[type][fromUnit][toUnit];
         setToValue(result);
         let strResult = fromValue + " " + fromUnit + " => " + result + " " + toUnit;
         setResults([strResult, ...results]);
+        dispatch({ type: 'ADD_RESULT', payload: strResult });
+        
     }
     function swapUnits() {
         setFromUnit(toUnit);
@@ -68,7 +71,8 @@ function UnitConverter() {
         setToValue(1);
         setFromValue(1);
     }
-    const [type, setType] = useContext(ItemsContext);
+    //const [type, setType] = useContext(ItemsContext);
+    const type = useSelector(store => store.type.data);
     const [fromUnit, setFromUnit] = useState('m')
     const [toUnit, setToUnit] = useState('m')
     const [fromValue, setFromValue] = useState(1);
@@ -92,7 +96,7 @@ function UnitConverter() {
                 })}
             </Select>
             <TextField variant="outlined" placeholder={fromUnit} value={fromValue} onChange={(event) => setFromValue(event.target.value)}/>
-            <Button variant="outlined" color="primary" onClick={swapUnits}>Swap unit</Button>
+            <Button variant="outlined" color="primary" onClick={swapUnits}>Swap units</Button>
             <p>
             <Select variant="outlined" value={toUnit} onChange={(event)=>setToUnit(event.target.value)}>
                 {Object.keys(factors[type]).map(item => {
@@ -104,9 +108,9 @@ function UnitConverter() {
             </Select>
             <TextField variant="outlined" placeholder={toUnit} value={toValue}/><Button variant="contained" color="primary" onClick={operate}>Convert</Button></p>
             <Button variant="contained" color="secondary" onClick={clear}>Clear</Button>
-            <ResultsContext.Provider value={[results, setResults]}>
-                <ConvertedUnits/>
-            </ResultsContext.Provider>
+            {/*<ResultsContext.Provider value={[results, setResults]}>*/}
+                
+            {/*</ResultsContext.Provider>*/}
         </div>
         )
 }
